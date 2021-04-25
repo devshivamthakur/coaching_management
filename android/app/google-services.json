@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "821045000341",
+    "project_id": "coaching-management-dfc5e",
+    "storage_bucket": "coaching-management-dfc5e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821045000341:android:1eaf5618dae9b05f6d439c",
+        "android_client_info": {
+          "package_name": "com.coaching_managment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821045000341-3schnea7542up47732lf7dcgt0eafqsg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coaching_managment",
+            "certificate_hash": "d0539ace4def348f907b9c687f042b4020f558f1"
+          }
+        },
+        {
+          "client_id": "821045000341-fpdvd67abf7odimkqtanpupulr83rfa3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkXK3Ur93BHsomHUV5WgtiLAVV41BqD0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821045000341-fpdvd67abf7odimkqtanpupulr83rfa3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
