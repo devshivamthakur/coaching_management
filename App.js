@@ -4,6 +4,8 @@ import {createStackNavigator} from "@react-navigation/stack";
 import login from "./component/login";
 import AsyncStorage   from "@react-native-community/async-storage";  
 import {  ImageBackground } from 'react-native';
+import forgot_password from './component/forgot_password';
+import dashboard from './component/dashboard';
 
 
 var isfirsttime;
@@ -76,10 +78,8 @@ render(){
         else if(check==='no'){
            if(get_lt==""){
              lt="Login";
-           }else if(get_lt=="hod"){
-             lt="fc";
-           }else if(get_lt=="teach"){
-             lt="fc_t";
+           }else if(get_lt=="dashboard"){
+             lt="dashboard";
            }
           isfirsttime=false;
           // setft(false)
@@ -109,6 +109,20 @@ render(){
             options={{headerShown:false}}
              name="Login"
              component={login}
+             /> 
+              <Stack.Screen
+            options={{
+              title:"forgot password"
+            }}
+             name="forgot_p"
+             component={forgot_password}
+             /> 
+              <Stack.Screen
+            options={{
+              title:"dashboard"
+            }}
+             name="dashboard"
+             component={dashboard}
              /> 
     
              

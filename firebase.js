@@ -19,6 +19,38 @@ class firebase {
 
                 console.log(error);
             });
+          
+    }
+
+    login_user=  (user,pass,nav)=>{
+
+        return new Promise((myResolve,myReject)=>{
+            auth().
+            signInWithEmailAndPassword(user,pass).
+            then((res)=>{
+               myResolve("successfull")
+            })
+            .catch(error=>{
+                     myReject("Unsuccessfull")
+                console.log(error)
+            })
+        })
+    }
+
+
+    forgot_password=(email)=>{
+        return new Promise(function(myResolve, myReject) {
+            auth().sendPasswordResetEmail(email)
+        .then(function (user) {
+            myResolve("link sent to email");
+          }).catch(function (e) {
+            myReject("not sent");
+          })
+          
+          // The producing code (this may take some time)
+          
+           
+          });
     }
 }
 
