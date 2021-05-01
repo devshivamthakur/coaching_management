@@ -25,7 +25,7 @@ export class login extends Component {
                     .then((value)=>{
                       ToastAndroid.show("Login Successfull",ToastAndroid.LONG)
                       this.props.navigation.replace("dashboard")
-                     AsyncStorage.setItem("sft","yes")  //get data
+                     AsyncStorage.setItem("sft","no")  //get data
                       AsyncStorage.setItem("lt","dashboard")
                     }).catch((error)=>{
                       ToastAndroid.show("You have Entered Wrong username or password",ToastAndroid.LONG)

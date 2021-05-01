@@ -70,12 +70,12 @@ render(){
             // setft(false)
         
         }
-        if(check==='yes'){
+        if(check=='yes'){
           lt="Login";
          isfirsttime=true;
         //  setft(false)
         }
-        else if(check==='no'){
+        else if(check=='no'){
            if(get_lt==""){
              lt="Login";
            }else if(get_lt=="dashboard"){
@@ -119,9 +119,11 @@ render(){
              /> 
               <Stack.Screen
             options={{
-              title:"dashboard"
+              title:"dashboard",
+              headerShown:false
             }}
              name="dashboard"
+            
              component={dashboard}
              /> 
     
