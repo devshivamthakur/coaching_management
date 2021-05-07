@@ -38,6 +38,9 @@ export class dashboard extends Component {
                 >
                 <Surface
                     style={style.Surface}
+                onTouchStart={()=>{
+                    this.props.navigation.navigate("add_new_student")
+                }}
                 >
                     <Icon name="ios-person-add-sharp" size={40} color="white" style={style.Icon} />
                     <Text style={style.txt1}> Add New Student</Text>

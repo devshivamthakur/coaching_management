@@ -6,6 +6,7 @@ import AsyncStorage   from "@react-native-community/async-storage";
 import {  ImageBackground } from 'react-native';
 import forgot_password from './component/forgot_password';
 import dashboard from './component/dashboard';
+import add_new_Student from './component/add_new_Student';
 
 
 var isfirsttime;
@@ -100,10 +101,9 @@ render(){
         <NavigationContainer>
           <Stack.Navigator
 
-          // initialRouteName={isfirsttime?"Sur":"Login"}  //if isfirsttime is true than call login page or if false call emp page
           initialRouteName={isfirsttime?lt:lt}  //if isfirsttime is true than call login page or if false call emp page
 
-          //  initialRouteName={"Emp"}
+          //  initialRouteName={"add_new_student"}
           >
              <Stack.Screen
             options={{headerShown:false}}
@@ -125,6 +125,15 @@ render(){
              name="dashboard"
             
              component={dashboard}
+             /> 
+               <Stack.Screen
+            options={{
+              title:"Add New Student",
+              headerShown:true
+            }}
+             name="add_new_student"
+            
+             component={add_new_Student}
              /> 
     
              
