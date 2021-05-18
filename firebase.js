@@ -1,7 +1,8 @@
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
-
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage   from "@react-native-community/async-storage";  
 class firebase {
 
     create_user = (user, pass) => {
@@ -102,6 +103,70 @@ class firebase {
 
         });
     }
+
+    read_value(){
+        var data=[];
+        var key=[];
+ 
+  return new Promise(function (myResolve, myReject) {
+           
+    database()
+    .ref('/student_data')
+    .once('value')
+    .then(snapshot => {
+              
+        console.log(JSON.stringify(snapshot.val()))
+      console.log(' ', snapshot.forEach((value)=>{
+          console.log(value.toJSON())
+          data.push(value.toJSON())
+          
+          key.push(String(value.key))
+        
+      }));
+      myResolve(data)
+      AsyncStorage.setItem("key",JSON.stringify(key))
+    }).catch((error)=>{
+        myReject("not getted")
+    })
+    ;
+
+});
+    }
+    async  requestUserPermission() {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      
+        if (enabled) {
+          var toake_id= await messaging().getToken();
+          console.log("token id "+toake_id)
+          console.log('Authorization status:', authStatus);
+        }
+      }
+      
+      update_student_data = (Name, Phone, Course, Address, Total_fee, Paid_fee, Due_fee, photo_url,key) => {
+        return new Promise(function (myResolve, myReject) {
+    const newReference = database()
+    .ref('/student_data/'+key)
+    .update({
+        Name: Name,
+        Phone:Phone,
+        Course:Course,
+        Address:Address,
+        Total_fee:Total_fee,
+        Paid_fee:Paid_fee,
+        Due_fee:Due_fee,
+        photo_url:String(photo_url)
+    })
+    .then(() => myResolve("updated"))
+    .catch((error)=>{
+        myReject("notupdated")
+    })
+    ;
+
+});
+}
 }
 
 export const Firebase = new firebase();

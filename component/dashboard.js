@@ -1,10 +1,33 @@
 import React, { Component } from 'react'
-import { ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { Alert, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { Surface,Appbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Firebase } from '../firebase';
+import AsyncStorage from "@react-native-community/async-storage";
 
 export class dashboard extends Component {
+    
+    componentDidMount(){
+        Firebase.read_value();
+    }
+    logout(){
+
+        Alert.alert("","Are you sure want to logout",
+        [
+            {
+                text:"Yes",
+                onPress:()=>{
+                    AsyncStorage.setItem("sft", "yes")  //get data
+                    AsyncStorage.setItem("lt", "Login")
+                    this.props.navigation.replace("Login")
+                }
+            }
+        ]
+        )
+
+     
+    }
     render() {
         return (
             <View
@@ -47,12 +70,19 @@ export class dashboard extends Component {
                 </Surface>
                 <Surface
                     style={style.Surface}
+                    onTouchStart={()=>{
+                        this.props.navigation.navigate("view_student")
+                    }}
                 >
                     <Icon name="person-circle-outline" size={40} color="white" style={style.Icon}  />
                     <Text style={style.txt1}> View Student</Text>
                 </Surface>
                 <Surface
                     style={style.Surface}
+                    onTouchStart={()=>{
+                        // 
+                        this.logout()
+                    }}
                 >
                     <Icon2 name="logout" size={45} color="white" style={style.Icon} />
                     <Text style={style.txt1}> Logout</Text>

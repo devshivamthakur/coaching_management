@@ -3,10 +3,14 @@ import {NavigationContainer} from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
 import login from "./component/login";
 import AsyncStorage   from "@react-native-community/async-storage";  
-import {  ImageBackground } from 'react-native';
+import {  ImageBackground,Alert } from 'react-native';
 import forgot_password from './component/forgot_password';
 import dashboard from './component/dashboard';
 import add_new_Student from './component/add_new_Student';
+import show_student from './component/show_student';
+import { Firebase } from './firebase';
+import messaging from '@react-native-firebase/messaging';
+import update_and_view from './component/update_and_view';
 
 
 var isfirsttime;
@@ -14,7 +18,9 @@ var lt="login";
 
 const Stack=createStackNavigator();
  class App extends React.Component{
-
+componentDidMount(){
+  Firebase.requestUserPermission()
+}
   state={
     loading:true
   }
@@ -92,6 +98,12 @@ render(){
     }
    useEffect(() => {  //it is used to get data before start app
      ct()               //calling function
+     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+
    },[]);
    
     if(!this.state.loading){
@@ -101,9 +113,9 @@ render(){
         <NavigationContainer>
           <Stack.Navigator
 
-          initialRouteName={isfirsttime?lt:lt}  //if isfirsttime is true than call login page or if false call emp page
+          // initialRouteName={isfirsttime?lt:lt}  //if isfirsttime is true than call login page or if false call emp page
 
-          //  initialRouteName={"add_new_student"}
+           initialRouteName={"dashboard"}
           >
              <Stack.Screen
             options={{headerShown:false}}
@@ -135,8 +147,25 @@ render(){
             
              component={add_new_Student}
              /> 
+             <Stack.Screen
+            options={{
+              title:"Registered Student",
+              headerShown:true
+            }}
+             name="view_student"
+            
+             component={show_student}
+             /> 
     
-             
+    <Stack.Screen
+            options={{
+              headerShown:true,
+              title:"Student Data"
+            }}
+             name="view_Student1"
+            
+             component={update_and_view}
+             /> 
           </Stack.Navigator>
         </NavigationContainer>
       );

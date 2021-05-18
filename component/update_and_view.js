@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {  ScrollView, StyleSheet, Text, TextInput, View, ToastAndroid } from 'react-native'
-import { Surface, Button, Avatar } from 'react-native-paper';
+import { ScrollView, StyleSheet, Text, TextInput, View, ToastAndroid } from 'react-native'
+import { Surface, Button, Avatar, Colors } from 'react-native-paper';
 import * as ImagePicker from 'react-native-image-picker';
 import NetworkUtils from '../NetworkUtils'
 import { Firebase } from '../firebase';
@@ -19,7 +19,7 @@ let options = {
     }
 
 };
-export class add_new_Student extends Component {
+export class update_and_view extends Component {
     state = {
         Name: "",
         Phone: "",
@@ -31,26 +31,51 @@ export class add_new_Student extends Component {
         Due_fee: "0000",
         is_uploading: false,
         photo_url: "",
-        progress_visible: false
+        progress_visible: false,
+        editable: false,
+        backgroundColor:"white",
+        key:""
+
 
 
     }
+    get_Data() {
+        var photo = { uri: this.props.route.params.data.photo_url }
+        this.setState({
+            Name: this.props.route.params.data.Name,
+            Phone: this.props.route.params.data.Name,
+            Course: this.props.route.params.data.Course,
+            Address: this.props.route.params.data.Address,
+            Total_fee: this.props.route.params.data.Total_fee,
+            Paid_fee: this.props.route.params.data.Paid_fee,
+            Due_fee: this.props.route.params.data.Due_fee,
+            key: this.props.route.params.key,
+            photo_url: this.props.route.params.data.photo_url,
+        },
+            () => {
+                this.setState({
+                    Photo: photo
+                })
+            }
+        )
+    }
     componentDidMount() {
-        //   this.get_total_team_()
+        this.get_Data()
+        // Firebase.read_value()
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     handleBackButtonClick = () => {
-        this.props.navigation.replace("dashboard");
+        this.props.navigation.goBack();
         return true;
     }
-    async add_new_Student() {
+    async update_and_view() {
         const isConnected = await NetworkUtils.isNetworkAvailable()
-        if(this.state.is_uploading){
+        if (this.state.is_uploading) {
             ToastAndroid.show("Wait Profile Photo is uploading....", ToastAndroid.LONG);
 
         }
-       else if (isConnected) {
-        this.setState({progress_visible:true})
+        else if (isConnected) {
+            this.setState({ progress_visible: true })
 
             if (this.state.Name.trim().length == 0) {
                 alert("Student Name is required")
@@ -73,36 +98,35 @@ export class add_new_Student extends Component {
                 alert("Student photo is required")
 
             } else {
-                Firebase.upload_student_data(this.state.Name, this.state.Phone, this.state.Course, this.state.Address, this.state.Total_fee, this.state.Paid_fee, this.state.Due_fee, this.state.photo_url)
+                Firebase.update_student_data(this.state.Name, this.state.Phone, this.state.Course, this.state.Address, this.state.Total_fee, this.state.Paid_fee, this.state.Due_fee, this.state.photo_url,this.state.key)
                     .then((value) => {
                         if (value != null && value.length != 0) {
-                            if (value == "uploaded") {
-                                this.handleBackButtonClick()
-                                this.setState({progress_visible:false})
+                            if (value == "updated") {
+                                this.setState({ progress_visible: false,editable:false,backgroundColor:"white" })
 
-                                alert('Student Registered Successfully')
+                                alert('Student updated Successfully')
                             } else {
-                                alert('Student Not Registered ')
+                                alert('Student Not updated ')
                             }
                         }
                     }).catch((value) => {
-                        this.setState({progress_visible:false})
+                        this.setState({ progress_visible: false })
 
-                        alert('Student Not Registered ')
+                        alert('Student Not updated ')
                     })
             }
         }
-         else {
+        else {
             ToastAndroid.show("Internet is required....", ToastAndroid.LONG);
         }
     }
     async get_t(time) {
-        const reference = storage().ref(time +'.png');
+        const reference = storage().ref(time + '.png');
         const url = await reference.getDownloadURL();
         this.setState({
-            photo_url:String(url)
+            photo_url: String(url)
         })
-        console.log("url sfds"+url)
+        console.log("url sfds" + url)
 
 
     }
@@ -124,7 +148,7 @@ export class add_new_Student extends Component {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
 
     }
-    pick_student_img = async () => {
+    pick_profile_img = async () => {
         // console.log("pick ")
         const isConnected = await NetworkUtils.isNetworkAvailable();
         if (isConnected) {
@@ -167,13 +191,15 @@ export class add_new_Student extends Component {
     render() {
         return (
             <View
-
+          
             >
-            <ProgressDialog visible={this.state.progress_visible}/>
-                <ScrollView>
+                <ProgressDialog visible={this.state.progress_visible} />
+                <ScrollView
+                >
                     <Surface
                         style={{
-                            padding: 5
+                            padding: 5,
+                            backgroundColor:this.state.backgroundColor
                         }}
                     >
                         <Avatar.Image
@@ -186,7 +212,6 @@ export class add_new_Student extends Component {
                             labelStyle={{
                                 color: 'white'
                             }}
-                            disabled={this.state.btn_enable}
                             style={
                                 {
                                     width: 130,
@@ -195,38 +220,43 @@ export class add_new_Student extends Component {
                                     backgroundColor: "#005a9e",
                                     height: 35,
                                     bottom: 20,
-                                    alignSelf: "center"
+                                    alignSelf: "center",
+                                    display: this.state.editable ? "flex" : "none"
 
                                 }
                             }
-                            onPress={() => this.pick_student_img()}
+                            onPress={() => this.pick_profile_img()}
                         >
                             Choose File
                 </Button>
-                        <Text style={style.txt}>Enter Name of student</Text>
+                        <Text style={style.txt}> Name of student</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Name}
                             onChangeText={(text) => { this.setState({ Name: text }) }}
                             placeholder="Ex: Shivam kumar thakur "
                         />
-                        <Text style={style.txt}>Enter PhoneNumber of student</Text>
+                        <Text style={style.txt}> PhoneNumber of student</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Phone}
                             keyboardType="numeric"
                             onChangeText={(text) => { this.setState({ Phone: text }) }}
                             placeholder="Ex: 1234567890 "
                         />
-                        <Text style={style.txt}>Enter course</Text>
+                        <Text style={style.txt}> course</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Course}
                             onChangeText={(text) => { this.setState({ Course: text }) }}
                             placeholder="Ex: c,c++,java, "
                         />
-                        <Text style={style.txt}>Enter Address of student</Text>
+                        <Text style={style.txt}> Address of student</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Address}
                             onChangeText={(text) => { this.setState({ Address: text }) }}
@@ -234,8 +264,9 @@ export class add_new_Student extends Component {
                             multiline={true}
                         />
 
-                        <Text style={style.txt}>Enter Total Fee</Text>
+                        <Text style={style.txt}> Total Fee</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Total_fee}
                             keyboardType="numeric"
@@ -243,44 +274,84 @@ export class add_new_Student extends Component {
                             placeholder="Ex: 10000 "
                         />
 
-                        <Text style={style.txt} >Enter Paid Fee</Text>
+                        <Text style={style.txt} > Paid Fee</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={style.TextInput}
                             value={this.state.Paid_fee}
                             keyboardType="numeric"
-                            onChangeText={(text) => { this.setState({ Paid_fee: text }, () => { this.setState({ Due_fee:String( this.state.Total_fee - this.state.Paid_fee) }) }) }}
+                            onChangeText={(text) => { this.setState({ Paid_fee: text }, () => { this.setState({ Due_fee: String(this.state.Total_fee - this.state.Paid_fee) }) }) }}
                             placeholder="Ex: 1200 "
                         />
                         <Text style={style.txt}>Due Fee</Text>
                         <TextInput
+                            editable={this.state.editable}
                             style={[style.TextInput, { color: "black" }]}
                             value={this.state.Due_fee}
                             keyboardType="numeric"
                             editable={false}
 
                         />
-                        <Button
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "space-around"
+                            }}
+                        >
+                            <Button
+                                mode="contained"
+                                labelStyle={{
+                                    color: 'white'
+                                }}
+                                style={
+                                    {
+                                        width: 90,
+                                        marginTop: "10%",
+                                        borderRadius: 15,
+                                        backgroundColor: "#005a9e",
+                                        height: 40,
+                                        bottom: 20,
+                                        alignSelf: "center"
+
+                                    }
+                                }
+                            onPress={()=>this.setState({
+                                editable:!this.state.editable
+                            },()=>{
+                                if(this.state.editable){
+                                    this.setState({backgroundColor:Colors.amber300})
+                                }else{
+                                    this.setState({backgroundColor:"white"})
+                                }
+                            }
+                            )}
+                            >
+                                Edit
+                </Button>
+                <Button
                             mode="contained"
                             labelStyle={{
                                 color: 'white'
                             }}
-                            disabled={this.state.btn_enable}
                             style={
                                 {
-                                    width: 150,
+                                    width: 160,
                                     marginTop: "10%",
                                     borderRadius: 15,
                                     backgroundColor: "#005a9e",
                                     height: 40,
                                     bottom: 20,
-                                    alignSelf: "center"
+                                    alignSelf: "center",
+                                    display:this.state.editable?"flex":"none"
 
                                 }
                             }
-                        onPress={()=>this. add_new_Student()}
+                        onPress={()=>this. update_and_view()}
                         >
-                            ADD Student
+                            Update Student
                 </Button>
+
+                        </View>
 
                     </Surface>
                 </ScrollView>
@@ -311,9 +382,10 @@ const style = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         width: "80%",
-        alignSelf: "center"
+        alignSelf: "center",
+        color:"black"
 
 
     }
 })
-export default add_new_Student
+export default update_and_view
